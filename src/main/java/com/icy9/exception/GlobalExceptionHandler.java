@@ -1,7 +1,10 @@
 package com.icy9.exception;
 
+import com.icy9.entity.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,13 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    public static final String DEFAULT_ERROR_VIEW = "error";
     @ExceptionHandler(value = Exception.class)
-    public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("exception", e);
-        mav.addObject("url", req.getRequestURL());
-        mav.setViewName(DEFAULT_ERROR_VIEW);
-        return mav;
+    @ResponseBody
+    public ResponseEntity<?> defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
+        Response response = new Response();
+        response.setMsg(Response.FAIL,"访问出错",e.toString());
+        return ResponseEntity.ok(response);
     }
 }

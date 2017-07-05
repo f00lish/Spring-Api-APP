@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 授权认证API
  * Created by f00lish on 2017/7/4.
@@ -27,8 +30,7 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-    @ApiOperation(value="登录API", notes="传用户名和密码，密码请用加密后的，返回token")
-    //示例如何注释swagger上的参数，其中paramType要注意统一
+    @ApiOperation(value="登录API", notes="传用户名和密码，密码请用加密后的，返回token",response = Response.class)
     @RequestMapping(value = "login", name = "登录API", method = RequestMethod.POST)
     public ResponseEntity<?> login(@RequestBody UserLoginOrCreate userCreate)
     {
@@ -41,6 +43,14 @@ public class LoginController {
         }
         response.setMsg(Response.OK,"验证成功",user);
         return ResponseEntity.ok(response);
+
+    }
+
+    @ApiOperation(value="异常测试", notes="用来测试异常状态下接口返回",response = Response.class)
+    @RequestMapping(value = "exception_test", name = "异常测试", method = RequestMethod.POST)
+    public ResponseEntity<?> exceptionTest() throws Exception
+    {
+        throw new Exception("出现异常啦");//强行出异常，检验全局返回
 
     }
 

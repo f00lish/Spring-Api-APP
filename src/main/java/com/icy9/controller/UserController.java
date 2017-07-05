@@ -6,6 +6,7 @@ import com.icy9.api_entity.UserLoginOrCreate;
 import com.icy9.repository.UserRepository;
 import com.icy9.service.UserService;
 import com.icy9.validator.UserCreateValidator;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class UserController {
         this.userCreateValidator = userCreateValidator;
         this.userRepository = userRepository;
     }
+    @ApiOperation(value="创建用户", notes="传userCreate进来，包含用户名和密码",response = Response.class)
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public ResponseEntity<Response> userCreate(@Valid @RequestBody UserLoginOrCreate userCreate,
                                                         BindingResult bindingResult) {
