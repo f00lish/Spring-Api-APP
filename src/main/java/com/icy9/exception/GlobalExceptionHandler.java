@@ -1,6 +1,9 @@
 package com.icy9.exception;
 
+import com.icy9.controller.UserController;
 import com.icy9.entity.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,9 +20,12 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ResponseEntity<?> defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
+        LOGGER.error("全局异常",e.toString());
         Response response = new Response();
         response.setMsg(Response.FAIL,"访问出错",e.toString());
         return ResponseEntity.ok(response);
