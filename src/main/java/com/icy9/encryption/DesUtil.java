@@ -1,6 +1,7 @@
 package com.icy9.encryption;
 
-import org.springframework.security.crypto.codec.Base64;
+
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -34,7 +35,8 @@ public class DesUtil {
      */
     public static String encrypt(String data, String key) throws Exception {
         byte[] bt = encrypt(data.getBytes(), key.getBytes());
-        String strs = new String(new Base64().encode(bt),"UTF-8");
+//        String strs = new String(new Base64().encode(bt),"UTF-8");
+        String strs="";
         return strs;
     }
 

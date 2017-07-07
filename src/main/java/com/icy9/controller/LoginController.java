@@ -4,20 +4,13 @@ import com.icy9.api_entity.UserLoginOrCreate;
 import com.icy9.entity.Response;
 import com.icy9.entity.User;
 import com.icy9.service.LoginService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 授权认证API
@@ -28,7 +21,6 @@ import java.util.Map;
 @RequestMapping(value = "/api", name = "授权认证API")
 public class LoginController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     private Response response = new Response();
     @Autowired
     private LoginService loginService;

@@ -1,25 +1,18 @@
 package com.icy9.service;
 
 
+import com.icy9.encryption.DesHelper;
 import com.icy9.entity.User;
 import com.icy9.repository.UserRepository;
-import com.icy9.token.TokenUserDetails;
 import com.icy9.token.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LoginServiceImpl implements LoginService {
 
-    private AuthenticationManager authenticationManager;
-    private UserDetailsService userDetailsService;
+    private UserService userService;
     private TokenUtil tokenUtil;
     private UserRepository userRepository;
 
@@ -28,12 +21,10 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     public LoginServiceImpl(
-            AuthenticationManager authenticationManager,
-            UserDetailsService userDetailsService,
+            UserService userDetailsService,
             TokenUtil tokenUtil,
             UserRepository userRepository) {
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
+        this.userService = userService;
         this.tokenUtil = tokenUtil;
         this.userRepository = userRepository;
     }
@@ -44,9 +35,9 @@ public class LoginServiceImpl implements LoginService {
         if(userRepository.findByUsername(username)!=null) {
             return null;
         }
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         final String rawPassword = userToAdd.getPassword();
-        userToAdd.setPassword(encoder.encode(rawPassword));
+        userToAdd.setPassword(DesHelper.encode(rawPassword));
 //        userToAdd.setLastPasswordResetDate(new Date());
 //        userToAdd.setRoles(asList("ROLE_USER"));
         return userRepository.save(userToAdd);
@@ -54,44 +45,16 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public User login(String username, String password) {
-        UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);
-        // Perform the security
-        try
-        {
-            final Authentication authentication = authenticationManager.authenticate(upToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }catch (Exception be)
-        {
-            return null;
-        }
         // Reload password post-security so we can generate token
-        TokenUserDetails userDetails = (TokenUserDetails)userDetailsService.loadUserByUsername(username);
-        final User user = userDetails.getUser();
-        if (user != null && user.getIm_cratedDate() == null)
+        User user = (User)userService.getUserByUsername(username);
+        if (user != null)
         {
-            try {
-//                IMChatUtil.im_register(user,new CallbackAdaptor<String>(){
-//                    @Override
-//                    public DataHandler<String> getDataHandler() {
-//                        return StringDataHandler.create();
-//                    }
-//                    @Override
-//                    public void onSuccess(String data) {
-//                        //data就是经过处理后的数据，直接在这里写自己的业务逻辑
-//                        if (data != null && data.contains("created"))
-//                        {
-//                            user.setIm_cratedDate(new Date());
-//                            userRepository.save(user);
-//                        }
-//                    }
-//                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            final String token = tokenUtil.generateToken(user);
+            user.setToken(token);
+            return user;
         }
-        final String token = tokenUtil.generateToken(userDetails);
-        user.setToken(token);
-        return user;
+        return  null;
+
     }
 
     @Override
@@ -100,7 +63,7 @@ public class LoginServiceImpl implements LoginService {
         {
             final String token = oldToken.substring(tokenHead.length());
             String username = tokenUtil.getUsernameFromToken(token);
-            TokenUserDetails user = (TokenUserDetails) userDetailsService.loadUserByUsername(username);
+            User user = (User) userService.getUserByUsername(username);
             if (tokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())){
                 return tokenUtil.refreshToken(token);
             }

@@ -1,10 +1,10 @@
 package com.icy9.token;
 
+import com.icy9.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -88,7 +88,7 @@ public class TokenUtil {
         return (lastPasswordReset != null && created.before(lastPasswordReset));
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(User userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
         claims.put(CLAIM_KEY_CREATED, new Date());
@@ -121,8 +121,7 @@ public class TokenUtil {
         return refreshedToken;
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        TokenUserDetails user = (TokenUserDetails) userDetails;
+    public Boolean validateToken(String token, User user) {
         final String username = getUsernameFromToken(token);
         final Date created = getCreatedDateFromToken(token);
         //final Date expiration = getExpirationDateFromToken(token);

@@ -1,15 +1,13 @@
 package com.icy9.service;
 
+import com.icy9.api_entity.UserLoginOrCreate;
 import com.icy9.entity.User;
 import com.icy9.entity.UserAuthority;
-import com.icy9.api_entity.UserLoginOrCreate;
 import com.icy9.repository.UserAuthorityRepository;
 import com.icy9.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -49,9 +47,11 @@ public class UserServiceImpl implements UserService{
     public User create(UserLoginOrCreate userCreate) {
         User user = new User();
         user.setUsername(userCreate.getUsername());
-        user.setPassword(new BCryptPasswordEncoder(10).encode(userCreate.getPassword()));
+//        user.setPassword(new BCryptPasswordEncoder(10).encode(userCreate.getPassword()));
+        user.setPassword(userCreate.getPassword());
         user.setIm_user(userCreate.getUsername());
-        user.setIm_passwd(new Md5PasswordEncoder().encodePassword(userCreate.getPassword(),10));
+//        user.setIm_passwd(new Md5PasswordEncoder().encodePassword(userCreate.getPassword(),10));
+        user.setIm_passwd(userCreate.getPassword());
         user.setEnabled(1);
         user.setCratedDate(new Date());
         user.setLastPasswordResetDate(new Date());
