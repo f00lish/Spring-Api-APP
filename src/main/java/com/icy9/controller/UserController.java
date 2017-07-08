@@ -50,7 +50,6 @@ public class UserController {
         this.userCreateValidator = userCreateValidator;
         this.userRepository = userRepository;
     }
-    @TokenValidate
     @ApiOperation(value="创建用户", notes="传userCreate进来，包含用户名和密码",response = Response.class)
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public ResponseEntity<Response> userCreate(@Valid @RequestBody UserLoginOrCreate userCreate,

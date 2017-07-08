@@ -21,12 +21,12 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ResponseEntity<?> defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
         Response response = new Response();
-        String message = e.getCause().getMessage();
-        if (message == null)
+        String message = "";
+        if (e.getCause() != null )
         {
-            message = "";
+            message ="-"+ e.getCause().getMessage();
         }
-        response.setMsg(Response.FAIL,"访问出错",e.toString()+ "-"+ message);
+        response.setMsg(Response.FAIL,"访问出错",e.toString()+ message);
         return ResponseEntity.ok(response);
     }
 }

@@ -21,7 +21,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     public LoginServiceImpl(
-            UserService userDetailsService,
+            UserService userService,
             TokenUtil tokenUtil,
             UserRepository userRepository) {
         this.userService = userService;
@@ -46,7 +46,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public User login(String username, String password) {
         // Reload password post-security so we can generate token
-        User user = (User)userService.getUserByUsername(username);
+        User user = userService.getUserByUsername(username);
         if (user != null)
         {
             final String token = tokenUtil.generateToken(user);

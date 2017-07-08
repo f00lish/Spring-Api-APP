@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 /**
  * Created by f00lish on 2017/7/7.
  * Qun:530350843
- * Token验证
+ * Token验证,面向切面
  */
 @Aspect
 @Component
@@ -68,21 +68,18 @@ public class TokenSecurityAspect {
             if (authHeader != null && authHeader.startsWith(tokenHead)) {
                 final String authToken = authHeader.substring(tokenHead.length()); // The part after "Bearer "
                 String username = tokenUtil.getUsernameFromToken(authToken);
-
                 LOGGER.info("checking authentication " + username);
-//            logger.info(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-//            if (username != null && (SecurityContextHolder.getContext().getAuthentication() == null || SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS")))) {
                 if (username != null ) {
                     User userDetails = this.userService.getUserByUsername(username);
 
                     if (!tokenUtil.validateToken(authToken, userDetails)) {
                         String message = String.format("Token [%s] 无效", authHeader);
-                        throw new Exception(message);
+                        throw new TokenException(message);
                     }
                 }
             }else
             {
-                throw new Exception("Token不能为空");
+                throw new TokenException("Token不能为空");
             }
         }
         // 调用目标方法
