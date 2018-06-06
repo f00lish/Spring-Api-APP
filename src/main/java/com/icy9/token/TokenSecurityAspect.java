@@ -76,6 +76,9 @@ public class TokenSecurityAspect {
                         String message = String.format("Token [%s] 无效", authHeader);
                         throw new TokenException(message);
                     }
+                }else {
+                    String message = String.format("Token [%s] 无效", authHeader);
+                    throw new TokenException(message);
                 }
             }else
             {
